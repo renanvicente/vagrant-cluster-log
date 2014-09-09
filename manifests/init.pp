@@ -111,9 +111,6 @@ node 'graylog2-node1' {
       elasticsearch_network_host => '172.16.0.200',
   }
 
-  #class {'graylog2::web':
-  #application_secret => 'fcZ62iGPR7a8WC7WhySGIhZdBtKCw4DxWQ2WuxgdyokZBJ7uyOZPpmsKMjP2l6lseYwOPUAvydcQsmgrsTr5yiIt9BQ729J1',
-  #}
 }
 
 node 'graylog2-web' {
@@ -142,46 +139,6 @@ node 'graylog2-web' {
 
 
 }
-
-node 'dns-master-puppet' {
-
-  class {'epel': }
-  class { '::bind': chroot => true }
-  bind::server::conf { '/etc/named.conf':
-    listen_on_addr    => [ 'any' ],
-    #listen_on_v6_addr => [ 'any' ],
-    #forwarders        => [ '8.8.8.8', '8.8.4.4' ],
-    allow_query       => [ 'localhost','172.16.0.0/16','192.168.2.0/24' ],
-    zones             => {
-      '5inova.com' => [
-        'type master',
-        'file "5inova.com.zone"',
-      ],
-    },
-  }
-  bind::server::file { '5inova.com.zone':
-    source => 'puppet:///modules/bind/5inova.com.zone',
-  }
-
-  firewall { '000 accept all icmp':
-    proto   => 'icmp',
-    action  => 'accept',
-  }->
-  firewall { '001 accept all to lo interface':
-    proto   => 'all',
-    iniface => 'lo',
-    action  => 'accept',
-  }->
-  firewall { '002 accept dns transfer':
-    proto  => 'tcp',
-    port   => 53,
-  }->
-  firewall { '003 accpt dns query':
-    proto  => 'udp',
-    port  => 53,
-  }
-
-
 
 }
 
