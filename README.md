@@ -5,6 +5,7 @@ Vagrant Cluster Log
 
 ```base
 
+$ git submodule update --init
 $ vagrant status
 Current machine states:
 
