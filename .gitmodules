@@ -1,9 +1,6 @@
 [submodule "modules/apt"]
 	path = modules/apt
 	url = https://github.com/puppetlabs/puppetlabs-apt
-[submodule "modules/graylog2"]
-	path = modules/graylog2
-	url = https://github.com/Graylog2/graylog2-puppet
 [submodule "modules/elasticsearch"]
 	path = modules/elasticsearch
 	url = https://github.com/elasticsearch/puppet-elasticsearch
@@ -13,6 +10,3 @@
 [submodule "modules/stdlib"]
 	path = modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib
-[submodule "modules/graylog"]
-	path = modules/graylog
-	url = https://github.com/renanvicente/graylog2-puppet
