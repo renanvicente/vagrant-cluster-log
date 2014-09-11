@@ -13,3 +13,6 @@
 [submodule "modules/stdlib"]
 	path = modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib
+[submodule "modules/graylog"]
+	path = modules/graylog
+	url = https://github.com/renanvicente/graylog2-puppet
