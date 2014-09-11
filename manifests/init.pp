@@ -1,20 +1,38 @@
-node 'elasticsearch-base' {
+node 'linux-base' {
 
-  stage { 'pre':
-   before => Stage['main'],
+  if $::osfamily =~ /Debian|Ubuntu/ {
+    stage { 'pre':
+      before => Stage['main'],
+    }
+    class {'update-debian':
+      stage => 'pre',
+    }
   }
 
-  class {'update-debian':
-    stage => 'pre',
+  exec {'iptables -F':
+    path => ['/bin','/sbin','/usr/bin','/usr/sbin','/usr/local/bin','/usr/local/sbin'],
   }
+
+}
+
+node 'graylog2-base' inherits linux-base {
 
   $packages = ['vim','libaugeas-ruby','libaugeas-dev']
 
   package {$packages:
     ensure => installed,
+    notify => Class['graylog2::repo'],
+  }
+}
+
+node 'elasticsearch-base' inherits linux-base {
+
+  $packages = ['vim','libaugeas-ruby','libaugeas-dev']
+  
+  package {$packages:
+    ensure => installed,
     require => Class['elasticsearch'],
   }
-
 
 }
 
@@ -71,32 +89,27 @@ node 'elasticsearch-node2' inherits elasticsearch-base {
   }
 }
 
-node 'rabbitmq-node1' {
-include '::rabbitmq'
+node 'rabbitmq-node1' inherits linux-base {
+  class {'::rabbitmq':
+    delete_guest_user => true,
+    admin_enable      => true,
+  }
+  
+  rabbitmq_user { 'admin':
+    admin    => true,
+    password => 'admin',
+    tags     => ['administrator'],
+  }
 
-rabbitmq_user { 'admin':
-  admin    => true,
-  password => 'admin',
-  tags     => ['administrator'],
+  rabbitmq_user_permissions { 'admin@/':
+    configure_permission => '.*',
+    read_permission      => '.*',
+    write_permission     => '.*',
+  }
+
 }
-}
 
-node 'graylog2-node1' {
-
-  stage { 'pre':
-   before => Stage['main'],
-  }
-
-  class {'update-debian':
-    stage => 'pre',
-  }
-
-  $packages = ['vim','libaugeas-ruby','libaugeas-dev']
-
-  package {$packages:
-    ensure => installed,
-    notify => Class['graylog2::server'],
-  }
+node 'graylog2-node1' inherits graylog2-base {
 
   class {'graylog2::repo':
       version => '0.20'
@@ -113,22 +126,8 @@ node 'graylog2-node1' {
 
 }
 
-node 'graylog2-web' {
+node 'graylog2-web' inherits graylog2-base {
 
-  stage { 'pre':
-   before => Stage['main'],
-  }
-
-  class {'update-debian':
-    stage => 'pre',
-  }
-
-  $packages = ['vim','libaugeas-ruby','libaugeas-dev']
-
-  package {$packages:
-    ensure => installed,
-    notify => Class['graylog2::repo'],
-  }
   class {'graylog2::repo':
       version => '0.20'
   }->
@@ -140,27 +139,49 @@ node 'graylog2-web' {
 
 }
 
+node 'graylog2-radio-node1' inherits graylog2-base {
+
+  class {'graylog2::repo':
+      version => '0.20'
+  }->
+  class {'graylog2::radio':
+    graylog2_server_uris =>['http://172.16.0.200:12900/'],
+    rest_listen_uri => 'http://172.16.0.205:12950/',
+    rest_transport_uri => 'http://172.16.0.205:12950/',
+    amqp_broker_hostname => '172.16.0.207',
+    amqp_broker_username => 'admin',
+    amqp_broker_password => 'admin',
+  }
+
 }
 
+node 'graylog2-radio-node2' inherits graylog2-base {
 
-node 'mongodb-node1' {
+  class {'graylog2::repo':
+      version => '0.20'
+  }->
+   class {'graylog2::radio':
+    graylog2_server_uris =>['http://172.16.0.200:12900/'],
+    rest_listen_uri => 'http://172.16.0.206:12950/',
+    rest_transport_uri => 'http://172.16.0.206:12950/',
+    amqp_broker_hostname => '172.16.0.207',
+    amqp_broker_username => 'admin',
+    amqp_broker_password => 'admin',
+  }
 
- stage { 'pre':
-  before => Stage['main'],
- }
 
-class {'update-debian':
-  stage => 'pre',
 }
-  
- class {'::mongodb::globals':
-   manage_package_repo => true,
- }->
- class {'::mongodb::server':
-   bind_ip => ['0.0.0.0'],
- }->
- class {'::mongodb::client':
- }
+
+node 'mongodb-node1' inherits linux-base {
+
+   class {'::mongodb::globals':
+     manage_package_repo => true,
+   }->
+   class {'::mongodb::server':
+     bind_ip => ['0.0.0.0'],
+   }->
+   class {'::mongodb::client':
+   }
   
 }
 

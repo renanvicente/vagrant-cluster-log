@@ -15,11 +15,12 @@ nodes = {
   'mongodb-node1' => [1,209],
   'mongodb-node2' => [1,210],
   'mongodb-node3' => [1,211],
+  'graylog2-web' => [1,212],
 }
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian-70rc1-x64-vbox4210"
-  config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210.box"
+  config.vm.box = "centos65"
+  config.vm.box_url = "http://www.lyricalsoftware.com/downloads/centos65.box"
   # Forescount NAC workaround
   config.vm.usable_port_range = 2800..2900
 
