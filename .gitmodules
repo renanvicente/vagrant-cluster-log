@@ -13,3 +13,15 @@
 [submodule "modules/graylog2"]
 	path = modules/graylog2
 	url = https://github.com/Graylog2/graylog2-puppet
+[submodule "modules/rabbitmq"]
+	path = modules/rabbitmq
+	url = https://github.com/puppetlabs/puppetlabs-rabbitmq
+[submodule "modules/staging"]
+	path = modules/staging
+	url = https://github.com/nanliu/puppet-staging
+[submodule "modules/haproxy"]
+	path = modules/haproxy
+	url = https://github.com/puppetlabs/puppetlabs-haproxy
+[submodule "modules/concat"]
+	path = modules/concat
+	url = https://github.com/puppetlabs/puppetlabs-concat

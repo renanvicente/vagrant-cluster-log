@@ -16,6 +16,8 @@ nodes = {
   'mongodb-node2' => [1,210],
   'mongodb-node3' => [1,211],
   'graylog2-web' => [1,212],
+  'haproxy-node1' => [1,213],
+  'haproxy-node2' => [1,214],
 }
 
 Vagrant.configure("2") do |config|
