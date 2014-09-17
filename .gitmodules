@@ -12,4 +12,4 @@
 	url = https://github.com/puppetlabs/puppetlabs-stdlib
 [submodule "modules/graylog2"]
 	path = modules/graylog2
-	url = https://github.com/renanvicente/graylog2-puppet
+	url = https://github.com/Graylog2/graylog2-puppet
